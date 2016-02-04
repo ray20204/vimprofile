@@ -1,0 +1,6 @@
+[submodule ".vim/bundle/php"]
+	path = .vim/bundle/php
+	url = https://github.com/webberwu/php.vim.git
+[submodule ".vim/bundle/html"]
+	path = .vim/bundle/html
+	url = https://github.com/webberwu/html.vim.git
