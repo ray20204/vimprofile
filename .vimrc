@@ -42,37 +42,47 @@ Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'ap/vim-css-color'
 Plugin 'airblade/vim-gitgutter'
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'c9s/colorselector.vim'
 Plugin 'cakebaker/scss-syntax.vim'
 Plugin 'easymotion/vim-easymotion'
-Plugin 'mattn/emmet-vim'
 Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'kien/ctrlp.vim'
 Plugin 'othree/html5.vim'
 Plugin 'othree/javascript-libraries-syntax.vim'
 Plugin 'pangloss/vim-javascript'
+Plugin 'vim-scripts/OOP-javascript-indentation'
+
+" 快速註解
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/syntastic'
+
+Plugin 'Shougo/neocomplete'
 Plugin 'Shougo/neocomplcache.vim'
+Plugin 'ervandew/supertab'
+
+Plugin 'drmingdrmer/xptemplate'
+
 Plugin 'terryma/vim-multiple-cursors'
 Plugin 'tpope/vim-ragtag'
 Plugin 'Townk/vim-autoclose'
-Plugin 'vim-scripts/OOP-javascript-indentation'
-Plugin 'vim-scripts/taglist.vim'
+Plugin 'junegunn/vim-easy-align'
 
-Plugin 'webberwu/php-doc.vim'
-Plugin 'webberwu/vim-fugitive'
+Plugin 'mikehaertl/pdv-standalone'
 
 Plugin 'captbaritone/better-indent-support-for-php-with-html'
 Plugin 'joshliao11/html'
 "snipmate
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
-Plugin 'joshliao11/vim-snippets'
+"Plugin 'garbas/vim-snipmate'
+Plugin 'ray20204/vim-snippets'
+Plugin 'Valloric/MatchTagAlways'
 "end snipmate
+Plugin 'majutsushi/tagbar'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -86,6 +96,11 @@ autocmd BufNewFile,BufRead *.html set filetype=php
 autocmd BufNewFile,BufRead *.htm set filetype=php
 
 highlight ExtraWhitespace ctermbg=1 guibg=red
+" Set cursorline colors
+highlight CursorLine ctermbg=235
+" Set color of number column on cursorline
+highlight CursorLineNR ctermbg=235 ctermfg=blue
+
 match ExtraWhitespace /\s\+$/
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
@@ -115,11 +130,6 @@ vnoremap <C-K> :call PhpDocRange()<CR>
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
 
-
-"---vim-autocomplpop
-let g:acp_behaviorUserDefinedMeets = 'acp#meetsForKeyword'
-let g:acp_behaviorUserDefinedFunction = 'syntaxcomplete#Complete'
-
 autocmd BufReadPre *.js let b:javascript_lib_use_jquery = 1
 autocmd BufReadPre *.js let b:javascript_lib_use_underscore = 1
 autocmd BufReadPre *.js let b:javascript_lib_use_backbone = 0
@@ -140,14 +150,15 @@ au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|
 set laststatus=2
 
 " " enable tabline
-let g:airline#extensions#tabline#show_buffers = 0
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#show_tab_nr = 0
-" " set left separator
-let g:airline#extensions#tabline#left_sep = ' '
-" " set left separator which are not editting
-let g:airline#extensions#tabline#left_alt_sep = '|'
-let g:airline_theme='murmur'
+
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#show_tab_type = 0
+let g:airline#extensions#tabline#show_tab_nr = 1
+let g:airline#extensions#tabline#tab_nr_type = 1
+let g:airline#extensions#tabline#left_alt_sep = '｜'
+let g:airline#extensions#branch#enabled = 1
+let g:airline_theme = 'murmur'
 
 "vim-indent-guides
 let g:indent_guides_auto_colors = 0
@@ -159,12 +170,17 @@ hi IndentGuidesEven ctermbg=234
 
 "Shougo/neocomplcache.vim
 let g:neocomplcache_enable_at_startup = 1
-if !exists('g:neocomplcache_omni_patterns')
-    let g:neocomplcache_omni_patterns = {}
+let g:neocomplcache_enable_smart_case = 1
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+let g:neocomplcache_DisableAutoComplete = 1
+let g:SuperTabDefaultCompletionType = '<C-X><C-U>'
+let g:neocomplcache_force_overwrite_completefunc = 1
+
+if !exists('g:neocomplcache_keyword_patterns')
+    let g:neocomplcache_keyword_patterns = {}
 endif
-let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplcache_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplcache_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
@@ -172,16 +188,51 @@ autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 "taglist
-nnoremap <silent> <F8> :TlistToggle<CR>
+nmap <F1> :TagbarToggle<CR>
+
+" matchAtag alswas
+let g:mta_use_matchparen_group = 1
+let g:mta_set_default_matchtag_color = 1
+let g:mta_filetypes = {
+    \ 'html' : 1,
+    \ 'phtml' : 1,
+    \ 'xml' : 1,
+    \ 'php' : 1,
+    \ 'jinja' : 1,
+    \}
+
+highlight MatchTag ctermfg=black ctermbg=lightgreen guifg=black guibg=lightgreen
 
 set completeopt-=preview
 nnoremap <silent> <F9> :set paste<CR>
 nnoremap <silent> <F5> :NERDTree<CR>
 
-inoremap jj <ESC>
-inoremap jk ->
-inoremap jst console.log('in'); e.preventDefault();
-inoremap vpa <?= $view->partial('test.phtml', $view) ?>
+"vim-easy-align
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+" " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+"end vim-easy-align
+
+" clear whitespace
+nnoremap <S-W> :%s/\s\+$//
+nnoremap <S-A> ggVG
+
+map <S-H> gT
+
+" go to next tab
+
+map <S-L> gt
+" Tab to indent
+nmap <tab> V>
+nmap <leader><tab> V<
+
+" Indent/unident block (,]) (,[)
+nnoremap <leader>] >i{<CR>
+nnoremap <leader>[ <i{<CR>
+
+" Search and replace word under cursor (,*)
+nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
 
 nnoremap <silent> <F7> :call EventInit()<CR>
 function EventInit()
