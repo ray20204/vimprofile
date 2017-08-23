@@ -83,13 +83,16 @@ Plugin 'Valloric/MatchTagAlways'
 "end snipmate
 Plugin 'majutsushi/tagbar'
 
+Plugin 'elzr/vim-json'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
 
-"colorscheme desert
-colorscheme molokai
+"colorscheme molokai
+set background=dark
+colorscheme material
 
 autocmd BufNewFile,BufRead *.phtml set filetype=php
 autocmd BufNewFile,BufRead *.html set filetype=php
@@ -158,7 +161,8 @@ let g:airline#extensions#tabline#show_tab_nr = 1
 let g:airline#extensions#tabline#tab_nr_type = 1
 let g:airline#extensions#tabline#left_alt_sep = '｜'
 let g:airline#extensions#branch#enabled = 1
-let g:airline_theme = 'murmur'
+"let g:airline_theme = 'murmur'
+let g:airline_theme = 'onedark'
 
 "vim-indent-guides
 let g:indent_guides_auto_colors = 0
@@ -233,22 +237,3 @@ nnoremap <leader>[ <i{<CR>
 
 " Search and replace word under cursor (,*)
 nnoremap <leader>* :%s/\<<C-r><C-w>\>//<Left>
-
-nnoremap <silent> <F7> :call EventInit()<CR>
-function EventInit()
-    execute '1s/.*/<?php/'
-    call append(1, "require_once(__DIR__ . '/init.php');")
-    call append(2, "?><!DOCTYPE html>")
-    let sline = search("<link")
-    call append(sline - 1, "<?= $view->partial('fbmeta.phtml', $view) ?>")
-    let titletag = search('<title>')
-    execute titletag . 's/\>.*\</><?= $eventTitle ?><\/'
-
-    let sline = search("main.js")
-    call append(sline, "<?= $view->partial('head.phtml', $view) ?>")
-    let sline = search("<body")
-    call append(sline, "<?= $view->partial('fbroot.phtml', $view) ?>")
-    call append(sline + 1, "<?= $view->partial('header.phtml', $view) ?>")
-    let sline = search("</body>")
-    call append(sline - 1, "<?= $view->partial('ga.phtml', $view) ?>")
-endfunction
