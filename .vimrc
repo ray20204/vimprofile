@@ -10,84 +10,84 @@ set ru
 set ic
 set encoding=utf-8
 set fileencoding=utf-8
-" set mouse=a
+"set mouse=a
 set modeline
 set cursorline
 "set background=dark
 set backspace=indent,eol,start
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set history=100
+set undolevels=100
 set expandtab
 set sw=4
 set tabstop=4
 set nocompatible              " be iMproved, required
 set nobomb
 set showmatch
+set autoindent
+set ttyfast
+set lazyredraw
 
 set wildmode=longest,list             " use emacs-style tab completion when selecting files, etc
 set wildmenu                          " make tab completion for files/buffers act like bash
 
 filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+" Specify a directory for plugins
+" " - For Neovim: ~/.local/share/nvim/plugged
+" " - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
 
 " plugin on GitHub repo
 
-Plugin 'ap/vim-css-color'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'c9s/colorselector.vim'
-Plugin 'cakebaker/scss-syntax.vim'
-Plugin 'easymotion/vim-easymotion'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'kien/ctrlp.vim'
-Plugin 'othree/html5.vim'
-Plugin 'othree/javascript-libraries-syntax.vim'
-Plugin 'pangloss/vim-javascript'
-Plugin 'vim-scripts/OOP-javascript-indentation'
+Plug 'ap/vim-css-color'
+Plug 'airblade/vim-gitgutter'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'cakebaker/scss-syntax.vim'
 
 " 快速註解
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/syntastic'
+Plug 'mikehaertl/pdv-standalone'
+Plug 'scrooloose/nerdcommenter'
 
-Plugin 'Shougo/neocomplete'
-Plugin 'Shougo/neocomplcache.vim'
-Plugin 'ervandew/supertab'
+Plug 'scrooloose/nerdtree'
+" syntax check
+Plug 'scrooloose/syntastic'
 
-Plugin 'drmingdrmer/xptemplate'
+Plug 'kien/ctrlp.vim'
+Plug 'junegunn/fzf.vim'
+Plug 'Shougo/neocomplete'
+Plug 'Shougo/neocomplcache.vim'
+Plug 'ervandew/supertab'
+Plug 'easymotion/vim-easymotion'
 
-Plugin 'terryma/vim-multiple-cursors'
-Plugin 'tpope/vim-ragtag'
-Plugin 'Townk/vim-autoclose'
-Plugin 'junegunn/vim-easy-align'
+Plug 'tpope/vim-surround'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'junegunn/vim-easy-align'
 
-Plugin 'mikehaertl/pdv-standalone'
+Plug 'othree/html5.vim'
+Plug 'pangloss/vim-javascript'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'editorconfig/editorconfig-vim'
 
-Plugin 'captbaritone/better-indent-support-for-php-with-html'
-Plugin 'joshliao11/html'
 "snipmate
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
-"Plugin 'garbas/vim-snipmate'
-Plugin 'ray20204/vim-snippets'
-Plugin 'Valloric/MatchTagAlways'
+Plug 'drmingdrmer/xptemplate'
+"Plug 'MarcWeber/vim-addon-mw-utils'
+"Plug 'garbas/vim-snipmate'
+"Plug 'ray20204/vim-snippets'
+Plug 'Valloric/MatchTagAlways'
 "end snipmate
-Plugin 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar'
 
-Plugin 'elzr/vim-json'
+Plug 'elzr/vim-json'
 
+"git
+Plug 'junegunn/gv.vim'
+Plug 'tpope/vim-fugitive'
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
+" Initialize plugin system
+call plug#end()
+
 filetype plugin indent on    " required
 
 "colorscheme molokai
@@ -97,6 +97,7 @@ colorscheme material
 autocmd BufNewFile,BufRead *.phtml set filetype=php
 autocmd BufNewFile,BufRead *.html set filetype=php
 autocmd BufNewFile,BufRead *.htm set filetype=php
+autocmd BufNewFile,BufRead *.json set filetype=json
 
 highlight ExtraWhitespace ctermbg=1 guibg=red
 " Set cursorline colors
@@ -112,9 +113,6 @@ autocmd BufWinLeave * call clearmatches()
 
 set foldmethod=indent
 set foldlevelstart=99
-"autocmd BufWinLeave * mkview
-"autocmd BufWinEnter * silent loadview
-"autocmd Syntax php normal zR
 
 
 "let NERDTreeIgnore=['\~$', '\.lo$', '\.la$']
@@ -124,6 +122,9 @@ let g:EasyMotion_leader_key = ','
 "---ctrlp
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
+
+" If installed using Homebrew
+set rtp+=/usr/local/opt/fzf
 
 "php-doc
 inoremap <C-K> <ESC>:call PhpDocSingle()<CR>i
@@ -141,7 +142,7 @@ autocmd BufReadPre *.js let b:javascript_lib_use_angularjs = 1
 
 "---syntastic
 let g:syntastic_auto_loc_list=1
-let g:syntastic_php_checkers=['php', 'phpmd']
+let g:syntastic_php_checkers=['php']
 let g:syntastic_css_checkers=[]
 let g:syntastic_javascript_checkers=['jshint']
 
@@ -191,6 +192,17 @@ autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
+augroup json_autocmd
+    autocmd!
+    autocmd FileType json set autoindent
+    autocmd FileType json set formatoptions=tcq2l
+    autocmd FileType json set textwidth=78 shiftwidth=2
+    autocmd FileType json set softtabstop=2 tabstop=8
+    autocmd FileType json set expandtab
+    autocmd FileType json set foldmethod=syntax
+augroup END
+let g:indentLine_noConcealCursor=""
+
 "taglist
 nmap <F1> :TagbarToggle<CR>
 
@@ -217,6 +229,8 @@ xmap ga <Plug>(EasyAlign)
 " " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 "end vim-easy-align
+
+" vim-multiple-cursors
 
 " clear whitespace
 nnoremap <S-W> :%s/\s\+$//
