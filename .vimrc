@@ -20,6 +20,8 @@ set history=100
 set undolevels=100
 set expandtab
 set sw=4
+set softtabstop=4
+set shiftwidth=4
 set tabstop=4
 set nocompatible              " be iMproved, required
 set nobomb
@@ -36,23 +38,39 @@ filetype off                  " required
 " Specify a directory for plugins
 " " - For Neovim: ~/.local/share/nvim/plugged
 " " - Avoid using standard Vim directory names like 'plugin'
-call plug#begin('~/.vim/plugged')
+call plug#begin()
 
 " plugin on GitHub repo
 
+Plug 'codota/tabnine-vim'
 Plug 'ap/vim-css-color'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'cakebaker/scss-syntax.vim'
+Plug 'luochen1990/rainbow'
+
+let g:rainbow_active = 1
 
 " 快速註解
-Plug 'mikehaertl/pdv-standalone'
+Plug 'Rican7/php-doc-modded'
 Plug 'scrooloose/nerdcommenter'
 
 Plug 'scrooloose/nerdtree'
 " syntax check
 Plug 'scrooloose/syntastic'
+
+"" Include Phpactor
+"Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+
+"if has('nvim')
+    ""Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+"else
+    "Plug 'Shougo/deoplete.nvim'
+    "Plug 'roxma/nvim-yarp'
+    "Plug 'roxma/vim-hug-neovim-rpc'
+"endif
+let g:deoplete#enable_at_startup = 1
 
 Plug 'kien/ctrlp.vim'
 Plug 'junegunn/fzf.vim'
@@ -62,13 +80,18 @@ Plug 'ervandew/supertab'
 Plug 'easymotion/vim-easymotion'
 
 Plug 'tpope/vim-surround'
-Plug 'terryma/vim-multiple-cursors'
+Plug 'mg979/vim-visual-multi', {'branch': 'master'}
 Plug 'junegunn/vim-easy-align'
+
+let g:VM_maps = {}
+let g:VM_maps['Find Under']         = '<C-d>'           " replace C-n
+let g:VM_maps['Find Subword Under'] = '<C-d>'           " replace visual C-n
 
 Plug 'othree/html5.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'nelsyeung/twig.vim'
 
 "snipmate
 Plug 'drmingdrmer/xptemplate'
@@ -80,6 +103,7 @@ Plug 'Valloric/MatchTagAlways'
 Plug 'majutsushi/tagbar'
 
 Plug 'elzr/vim-json'
+
 
 "git
 Plug 'junegunn/gv.vim'
@@ -93,6 +117,8 @@ filetype plugin indent on    " required
 "colorscheme molokai
 set background=dark
 colorscheme material
+
+"autocmd BufWritePre *.markdown,*.md,*.text,*.txt,*.wiki call PanGuSpacing()
 
 autocmd BufNewFile,BufRead *.phtml set filetype=php
 autocmd BufNewFile,BufRead *.html set filetype=php
@@ -125,11 +151,27 @@ set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
 
 " If installed using Homebrew
 set rtp+=/usr/local/opt/fzf
+let g:fzf_command_prefix = 'Fzf'
+" FZF.vim now supports this command out of the box
+" so this code is no longer needed.
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --hidden --ignore-case --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
+  \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%:hidden', '?'),
+  \   <bang>0)
 
 "php-doc
 inoremap <C-K> <ESC>:call PhpDocSingle()<CR>i
 nnoremap <C-K> :call PhpDocSingle()<CR>
 vnoremap <C-K> :call PhpDocRange()<CR>
+let g:pdv_cfg_FuncCommentEnd = ''
+let g:pdv_cfg_ClassCommentEnd = ''
+let g:pdv_cfg_autoEndFunction = 0
+let g:pdv_cfg_autoEndClass = 0
+
+" go
+let g:go_fmt_command = "goimports"
 
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
@@ -174,18 +216,18 @@ hi IndentGuidesOdd  ctermbg=233
 hi IndentGuidesEven ctermbg=234
 
 "Shougo/neocomplcache.vim
-let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_enable_smart_case = 1
-let g:neocomplcache_min_syntax_length = 3
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
-let g:neocomplcache_DisableAutoComplete = 1
-let g:SuperTabDefaultCompletionType = '<C-X><C-U>'
-let g:neocomplcache_force_overwrite_completefunc = 1
+"let g:neocomplcache_enable_at_startup = 1
+"let g:neocomplcache_enable_smart_case = 1
+"let g:neocomplcache_min_syntax_length = 3
+"let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+"let g:neocomplcache_DisableAutoComplete = 1
+""let g:SuperTabDefaultCompletionType = '<C-X><C-U>'
+"let g:neocomplcache_force_overwrite_completefunc = 1
 
-if !exists('g:neocomplcache_keyword_patterns')
-    let g:neocomplcache_keyword_patterns = {}
-endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+"if !exists('g:neocomplcache_keyword_patterns')
+    "let g:neocomplcache_keyword_patterns = {}
+"endif
+"let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
@@ -231,6 +273,8 @@ nmap ga <Plug>(EasyAlign)
 "end vim-easy-align
 
 " vim-multiple-cursors
+let g:VM_maps["Add Cursor Down"] = '<C-/>'
+let g:VM_maps["Add Cursor Up"] = '<C-\>'
 
 " clear whitespace
 nnoremap <S-W> :%s/\s\+$//
